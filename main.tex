@@ -139,6 +139,27 @@ Les instructions ont pour tache
    \item subs R6,\#1 : fait R6-=1
 \end{itemize}
 
+On peut réécrire l'algorithme sous forme de pseudo-code :
+
+
+\begin{center}
+\begin{minipage}{0.6\textwidth} % Ajuste la largeur (ici 60% de la largeur de page)
+\begin{tabbing}
+\hspace{1cm} \= \hspace{1cm} \= \kill 
+tant que \\
+\> GPIO\_PORT\_NOT0 = 0xa0002300 \\
+\> LED4 = $(1 \ll 11)$ \\
+\> init\_cpt = 2000 \\
+\> stocker LED4 à l'adresse GPIO\_PORT\_NOT0 \\
+\> tant que init\_cpt non nul  \\
+\> \> init\_cpt $-=$ 1
+\end{tabbing}
+\end{minipage}
+\end{center}
+
+\subsection*{2.3}
+
+
 
 \section{Manipulation 3}
 
