@@ -1,0 +1,148 @@
+\documentclass[a4paper,12pt,notitlepage,oneside]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[greek,english,french]{babel}
+\usepackage[cyr]{aeguill}
+\usepackage{enumitem}
+\usepackage{float}
+\AtBeginDocument{
+   \renewcommand\tablename{\textsc{Tableau}}
+   \renewcommand\figurename{\textsc{Figure}}
+}
+\usepackage{graphicx}          
+\usepackage{tabularx} 
+\usepackage{multirow}   
+\usepackage{color}
+\definecolor{ENSblue}{RGB}{0,119,139}
+\usepackage[backref=true,colorlinks=true,linkcolor=ENSblue,urlcolor=ENSblue]{hyperref}
+\addtolength{\textwidth}{4cm}
+\addtolength{\oddsidemargin}{-2cm}
+\addtolength{\topmargin}{-1.8cm}
+\addtolength{\textheight}{3.6cm}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{amsmath,amssymb}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\author{Dubresson Matteo} 
+\title{TP2 \\ Utilisation du langage assembleur sur ARM Cortex M0+}
+\date{}
+\pagestyle{plain}
+\begin{document}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{TP2 441} % à gauche
+\fancyhead[R]{Matteo DUBRESSON} % à droite
+\fancyfoot[C]{\thepage} % numéro de page centré
+\maketitle
+\vspace{1 cm}
+\begin{center}
+--  \today~ --
+\end{center}
+\vspace{1 cm}
+\tableofcontents
+
+\maketitle
+
+\bigskip
+
+\newpage
+
+\section{Préparation}
+
+\subsection*{P.1}
+
+Dans la documentation du LPC804, on peut retrouver les adresses de ces différents registres. 
+
+\[ \text{SYSAHBCLKCTRL0 :} ~~0x4004~8080 ~~|~~ 0100~0000~0000~0000~0100~1000~0000~1000~0000\]
+
+\[ \text{DIR0 :} ~~0xA000~2000 ~~|~~ 1010~0000~0000~0000~0010~0000~0000~0000\]
+
+\subsection*{P.2}
+
+Dans la documentation des processeurs ARMv6-M, on retrouve page A1-26 que les instructions sont codées sur 32 bits. 
+
+\subsection*{P.3}
+
+La ligne 10 du code active l'horloge des périphériques GPIO et IOCON. On réalise un |= pour ne pas changer les périphériques déjà activés. On combine également les deux périphériques avec un | pour pouvoir réaliser l'opération en une seule fois.
+
+\subsection*{P.4}
+
+Dans le code assembleur présenté, on retrouve plusieurs instructions : 
+
+\begin{itemize}
+   \item movs r3,\#x : permet de mettre une valeur x dans un registre r3.
+   \item lsls r2,r3,\#y : permet de décaler les bits du registre r3 vers la gauche de y positions et la stocker dans r2.
+   \item ldr r1,[r0,r2] : permet de lire la valeur à l'adresse contenue dans r0 + r2 et de la stocker dans r1.
+   \item orrs r1,r3 : fait r1 |= r3.
+   \item str r1,[r0,r2] : permet d'écrire la valeur contenue dans r1 à l'adresse contenue dans r0 + r2.
+\end{itemize}
+
+\subsection*{P.5}
+
+\noindent Le \# sert à désigner une valeur immédiate et non un registre. 
+\\
+\\
+Le [~] sert à désigner une adresse mémoire.
+
+\subsection*{P.6}
+
+On commence par mettre $0xA0$ dans $R3$, on le décale de 24 bits puis on le met dans $R2$. \\
+On réalise la même opération avec $0x80$ mais on le décale de 6 bits. \\
+En sommant les deux dans $R3$, on obtient $0xA000~2000$ qui est l'adresse du registre DIR0. \\
+
+On peut donc récupérer la valeur du registre DIR0, la suite du code servant à d'autres opérations. 
+
+
+
+\section{Manipulation 1}
+
+\subsection*{1.1}
+
+
+\subsection*{1.2}
+
+Lorsqu'on implémente le code dans le microcontrôleur, on peut observer que la LED s'allume et s'éteint à une période de 0,57 s
+
+\subsection*{1.3}
+
+Lorsqu'on lance le code dans l'onglet désassembleur, on constate que 48 instructions sont nécessaires pour exécuter la fonction main. 
+
+\section{Manipulation 2}
+
+\subsection*{2.1}
+
+Les directives qui ne génèrent pas de code sont :
+\begin{itemize}
+   \item .syntax
+   \item .equ
+   \item boucle / bne boucle
+\end{itemize}
+
+Tandis que les instructions qui génèrent du code sont :
+
+\begin{itemize}
+   \item ldr
+   \item str
+   \item subs
+\end{itemize}
+
+\subsection*{2.2}
+
+Les instructions ont pour tache 
+
+\begin{itemize}
+   \item ldr R,\#x : permet de charger la valeur x dans le registre R.
+   \item str R1,[R2,\#0] : permet d'écrire la valeur contenue dans R1 à l'adresse contenue dans R2.
+   \item subs R6,\#1 : fait R6-=1
+\end{itemize}
+
+
+\section{Manipulation 3}
+
+\section{Manipulation 4}
+
+
+\end{document}
