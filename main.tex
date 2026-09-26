@@ -42,6 +42,18 @@
 --  \today~ --
 \end{center}
 \vspace{1 cm}
+
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{2026-09-26-20-42-44.png}
+    \caption{LPC804 utilisé}
+    \label{fig:${imageFileNameWithoutExt}}
+\end{figure}
+
+
 \tableofcontents
 
 \maketitle
@@ -101,6 +113,14 @@ On peut donc récupérer la valeur du registre DIR0, la suite du code servant à
 
 \subsection*{1.1}
 
+Parmis les différents registres utilisés : 
+
+\begin{itemize}
+   \item SYSAHBCLKCTRL0 : permet d'activer l'horloge des périphériques GPIO et IOCON.
+   \item DIR0 : permet de configurer les broches du port 0 en entrée ou en sortie.
+   \item GPIO\_PORT\_NOT0 : permet d'inverser l'état du port 0.
+\end{itemize}
+
 
 \subsection*{1.2}
 
@@ -109,6 +129,8 @@ Lorsqu'on implémente le code dans le microcontrôleur, on peut observer que la 
 \subsection*{1.3}
 
 Lorsqu'on lance le code dans l'onglet désassembleur, on constate que 48 instructions sont nécessaires pour exécuter la fonction main. 
+
+\vspace{1cm}
 
 \section{Manipulation 2}
 
@@ -159,11 +181,63 @@ tant que \\
 
 \subsection*{2.3}
 
+Lors de l'exécution des instructions 0x334 à 0x338, on fait : 
+
+\begin {enumerate} [start = 334] 
+   \item ldr r6 [pc,\#20] @0x34c $<boucle+22>$ : on charge dans r6 la valeur contenue à l'adresse pc+20, soit 0x34c. On obtient donc r6 = 2000.
+   \addtocounter{enumi}{1}
+   \item subs r6,\#1 : on décrémente r6 de 1 
+   \addtocounter{enumi}{1}
+   \item bne.n 0x336 $<main+54>$ : on teste si r6 est nul, si ce n'est pas le cas on retourne à l'adresse 0x336.
+\end{enumerate}
+
+\subsection*{2.4}
+
+Maintenant qu'on a optimisé le code, on peut observer que la LED s'allume et s'éteint avec une période beaucoup plus courte, d'environ 0,15 s (compliquer à mesurer précisément car clignote très vite). 
+
+\subsection*{2.5}
+
+Si on analyse l'implémentation des instructions ldr, on peut constater que 
+
+\subsection*{2.6}
+
+Dans la documentation, on comprend que le s sert à faire une mise à jour du drapeau de condition. 
+
+\subsection*{2.7}
+
+Bne signifie \textit{branch if not equal}, ainsi dans une instruction du type bne boucle : 
+
+\begin{itemize}
+   \item si le drapeau Z == 0 : on continue la boucle
+   \item si le drapeau Z == 1 : on sort de la boucle
+\end{itemize}
+
+
+\vspace{1cm}
 
 
 \section{Manipulation 3}
 
-\section{Manipulation 4}
+\subsection*{3.1}
 
+On a intégré la boucle infinie au code assembleur dans la fonction main2.
+En faisant ça le code rédigé à la main est beaucoup plus optimisé : la boucle d'attente ne fais plus que deux instructions (subs, bne), ce qui veut dire qu'elle s'exécutera plus vite qu'en C, donc on aura un gain de temps significatif. 
+
+\subsection*{3.2}
+
+Dans le programme en C on déclare le main2() à la ligne 14, et comme dans le code assembleur on fait un global .main2, on rend visible la fonction pour assurer sa liaison entre les différents fichiers. 
+
+\subsection*{3.3 / 3.4}
+
+Comme le code qu'on rajoute dans le fichier assembleur correspond à l'initialisation de la tache qu'on fait, et non les consignes qu'on effectue en boucle, le gain de temps sera non significatif. 
+
+\subsection*{3.5}
+
+Le programme en C prend une quinzaine de lignes à écrire, et est moins complexe pour un utilisateur à faire. 
+Le programme assembleur prend 20 lignes de plus à écrire, et est moins évident à écrire car on doit détailler toutes les opérations et faire bien attention aux registres qu'on utilise à chaque fois. 
+
+\subsection*{3.6}
+
+Cependant, malgré les réponses données en 3.5, étant donné qu'on peut agir directement sur les consignes qu'on demande, on peut simplifier grandement le temps de calcul. Le code assembleur a donc cette utilité : éviter de se reposer sur des instructions pré-construites par le langage C qui ne sont pas optimisées dans tout les cas de figure. 
 
 \end{document}
